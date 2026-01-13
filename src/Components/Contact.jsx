@@ -1,7 +1,31 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, MessageSquare, Linkedin } from 'lucide-react';
 
 export default function Contact() {
+    const [formData, setFormData] = useState({
+        fullName: '',
+        email: '',
+        subject: '',
+        message: ''
+    });
+
+    const [submittedData, setSubmittedData] = useState(null);
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setSubmittedData(formData);
+        // Reset form after submission if desired, or keep it. 
+        // For now, keeping it allows user to correct and resend easily if needed.
+    };
+
     return (
         <section id="contact" className="py-24 relative overflow-hidden">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
@@ -73,22 +97,30 @@ export default function Contact() {
                         viewport={{ once: true }}
                         className="glass-card p-10 border-white/5"
                     >
-                        <form className="space-y-6">
+                        <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-400 mb-2">Full Name</label>
                                     <input
                                         type="text"
+                                        name="fullName"
+                                        value={formData.fullName}
+                                        onChange={handleChange}
                                         placeholder="John Doe"
                                         className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl focus:border-primary/50 outline-none transition-all"
+                                        required
                                     />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
                                     <input
                                         type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
                                         placeholder="john@example.com"
                                         className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl focus:border-primary/50 outline-none transition-all"
+                                        required
                                     />
                                 </div>
                             </div>
@@ -96,23 +128,47 @@ export default function Contact() {
                                 <label className="block text-sm font-medium text-gray-400 mb-2">Subject</label>
                                 <input
                                     type="text"
+                                    name="subject"
+                                    value={formData.subject}
+                                    onChange={handleChange}
                                     placeholder="Project Inquiry"
                                     className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl focus:border-primary/50 outline-none transition-all"
+                                    required
                                 />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-400 mb-2">Message</label>
                                 <textarea
+                                    name="message"
+                                    value={formData.message}
+                                    onChange={handleChange}
                                     rows="5"
                                     placeholder="How can I help you?"
                                     className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl focus:border-primary/50 outline-none transition-all resize-none"
+                                    required
                                 ></textarea>
                             </div>
-                            <button className="w-full py-4 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold flex items-center justify-center gap-3 transition-all group">
+                            <button type="submit" className="w-full py-4 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold flex items-center justify-center gap-3 transition-all group">
                                 Send Message
                                 <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                             </button>
                         </form>
+
+                        {submittedData && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="mt-8 p-6 bg-green-500/10 border border-green-500/20 rounded-xl"
+                            >
+                                <h3 className="text-green-400 font-bold mb-3 text-lg">Message Sent!</h3>
+                                <div className="space-y-2 text-gray-300">
+                                    <p><span className="font-semibold text-gray-400">Name:</span> {submittedData.fullName}</p>
+                                    <p><span className="font-semibold text-gray-400">Email:</span> {submittedData.email}</p>
+                                    <p><span className="font-semibold text-gray-400">Subject:</span> {submittedData.subject}</p>
+                                    <p><span className="font-semibold text-gray-400">Message:</span> {submittedData.message}</p>
+                                </div>
+                            </motion.div>
+                        )}
                     </motion.div>
                 </div>
             </div>
